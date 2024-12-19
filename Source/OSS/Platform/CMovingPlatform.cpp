@@ -2,17 +2,67 @@
 
 ACMovingPlatform::ACMovingPlatform()
 {
-	Speed = 200.f;
-
+	PrimaryActorTick.bCanEverTick = true;
+	
 	SetMobility(EComponentMobility::Movable);
+	
+	Speed = 30.f;
+
+	TargetLS = FVector(0, 0, 150);
+
+}
+
+void ACMovingPlatform::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		SetReplicates(true);
+		SetReplicatingMovement(true);
+	}
+
+	StartWS = GetActorLocation();
+	TargetWS = GetTransform().TransformPosition(TargetLS);
 }
 
 void ACMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector CurrentLocation = GetActorLocation();
-	CurrentLocation += FVector::RightVector * Speed * DeltaTime;
+	if (ActiveCount > 0)
+	{
+		if (HasAuthority())
+		{
+			float TotalDistance		= (StartWS - TargetWS).Size();
 
-	SetActorLocation(CurrentLocation);
+			FVector CurrentLocation = GetActorLocation();
+			float AwayFromStart		= (CurrentLocation - StartWS).Size();
+
+			if (AwayFromStart >= TotalDistance)
+			{
+				FVector Temp	= StartWS;
+				StartWS			= TargetWS;
+				TargetWS		= Temp;
+			}
+
+			FVector Direction	= (TargetWS - StartWS).GetSafeNormal();
+			CurrentLocation		+= Direction * Speed * DeltaTime;
+
+			SetActorLocation(CurrentLocation);
+		}
+	}
+}
+
+void ACMovingPlatform::IncreaseActiveCount()
+{
+	ActiveCount++;
+}
+
+void ACMovingPlatform::DecreaseActiveCount()
+{
+	if (ActiveCount > 0)
+	{
+		ActiveCount--;
+	}
 }
