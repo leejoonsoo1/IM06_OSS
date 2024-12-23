@@ -3,12 +3,14 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Interfaces/CMenuInterface.h"
 #include "CGameInstance.generated.h"
 
 class UUserWidget;
+class UCMainMenu;
 
 UCLASS()
-class OSS_API UCGameInstance : public UGameInstance
+class OSS_API UCGameInstance : public UGameInstance, public ICMenuInterface
 {
 	GENERATED_BODY()
 
@@ -27,4 +29,5 @@ public:
 
 private:
 	TSubclassOf<UUserWidget> MainMenuClass;
+	UCMainMenu* MainMenu;
 };
