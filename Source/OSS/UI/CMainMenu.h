@@ -1,8 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Interfaces/CMenuInterface.h"
+#include "CMenuBase.h"
 #include "CMainMenu.generated.h"
 
 class UButton;
@@ -10,7 +9,7 @@ class UWidgetSwitcher;
 class UEditableTextBox;
 
 UCLASS()
-class OSS_API UCMainMenu : public UUserWidget
+class OSS_API UCMainMenu : public UCMenuBase
 {
 	GENERATED_BODY()
 
@@ -30,12 +29,8 @@ private:
 	UFUNCTION()
 	void OpenJoinMenu();
 
-
-public:
-	void SetOwningInstance(ICMenuInterface* InInstance);
-
-	void Startup();
-	void Shutdown();
+	UFUNCTION()
+	void QuitGame();
 
 private:
 	// MainMenu
@@ -55,6 +50,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UWidget* JoinMenu;
 
+	UPROPERTY(meta = (BindWidget))
+	UButton* QuitButton;
+
 	// Join Menu
 	UPROPERTY(meta = (BindWidget))
 	UButton* CancelJoinButton;
@@ -64,7 +62,4 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* IPAddressField;
-
-private:
-	ICMenuInterface* OwningInstance;
 };
